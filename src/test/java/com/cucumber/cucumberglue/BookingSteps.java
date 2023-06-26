@@ -94,6 +94,28 @@ public class BookingSteps extends GeneralSteps {
         verifyDetailsFor(expectedBooking, createdBooking);
     }
 
+    @And("I send a PUT request to the endpoint with updated booking details")
+    public void sendAPutRequestToTheEndpointWithUpdatedBookingDetails() {
+        BookingItemDto createdBooking = scenarioContext().getFromStore(RESPONSE, Response.class).as(BookingItemDto.class);
+        int bookingId = createdBooking.getBookingid();
+
+        BookingItemDetailsDto updatedBookingItemDetailsDto = BookingBuildersHelper.buildValidBooking();
+
+        Response response = bookingController.updateBooking(updatedBookingItemDetailsDto, bookingId);
+        scenarioContext().putInStore(RESPONSE, response);
+        scenarioContext().putInStore("updatedBooking", updatedBookingItemDetailsDto);
+    }
+
+    @And("the response body should contain the updated booking details")
+    public void theResponseBodyShouldContainTheUpdatedBookingDetails() {
+        BookingItemDetailsDto expectedBooking = scenarioContext()
+                .getFromStore("updatedBooking", BookingItemDetailsDto.class);
+        BookingItemDetailsDto createdBooking = scenarioContext()
+                .getFromStore(RESPONSE, Response.class).as(BookingItemDetailsDto.class);
+
+        verifyDetailsFor(expectedBooking, createdBooking);
+    }
+
     private void verifyDetailsFor(BookingItemDetailsDto expectedBooking, BookingItemDetailsDto createdBooking) {
         Assert.assertEquals(expectedBooking.getFirstname(), createdBooking.getFirstname());
         Assert.assertEquals(expectedBooking.getLastname(), createdBooking.getLastname());

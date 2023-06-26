@@ -19,15 +19,11 @@ public class ObjectMapperHelper {
                     objectMapper = new ObjectMapper();
                     objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
                     objectMapper.setSerializationInclusion(NON_NULL);
+                    objectMapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
                 }
             }
         }
         return objectMapper;
-    }
-
-    public static void writeObjectToJsonFile(Object object, String filePath) throws IOException {
-        ObjectMapper mapper = getInstance();
-        mapper.writeValue(new File(filePath), object);
     }
 
     public static String writeObjectToJsonString(Object object) throws IOException {
@@ -38,10 +34,5 @@ public class ObjectMapperHelper {
     public static <T> T readJsonFileToObject(String filePath, Class<T> valueType) throws IOException {
         ObjectMapper mapper = getInstance();
         return mapper.readValue(new File(filePath), valueType);
-    }
-
-    public static <T> T readJsonStringToObject(String jsonString, Class<T> valueType) throws IOException {
-        ObjectMapper mapper = getInstance();
-        return mapper.readValue(jsonString, valueType);
     }
 }
