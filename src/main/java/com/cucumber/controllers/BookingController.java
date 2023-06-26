@@ -57,4 +57,25 @@ public class BookingController extends GenericController {
         verifySuccessRequest(response);
         return response;
     }
+
+    public Response partialBookingUpdate(BookingItemDetailsDto buildPartialBooking, int bookingId) {
+        String url = bookingsURL + "/" + bookingId;
+
+        String requestBody = "";
+        try {
+            requestBody = ObjectMapperHelper.writeObjectToJsonString(buildPartialBooking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        RequestSpecification requestSpec = given()
+                .contentType(ContentType.JSON)
+                .header("Accept", "application/json")
+                .header("Authorization", "Basic YWRtaW46cGFzc3dvcmQxMjM=");
+
+        Response response = httpClient.doPatch(url, requestBody, requestSpec);
+
+        verifySuccessRequest(response);
+        return response;
+    }
 }
