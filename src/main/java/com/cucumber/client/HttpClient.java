@@ -9,6 +9,9 @@ import io.restassured.specification.RequestSpecification;
 
 public class HttpClient {
 
+    public static final int CODE_200 = 200;
+    public static final int CODE_201= 201;
+
     public HttpClient() {
         RestAssured.defaultParser = Parser.JSON;
     }
