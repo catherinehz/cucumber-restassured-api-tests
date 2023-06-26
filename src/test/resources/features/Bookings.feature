@@ -24,3 +24,10 @@ Feature: Booking API testing
     And I send a PUT request to the endpoint with updated booking details
     Then I should receive a successful response
     And the response body should contain the updated booking details
+
+  Scenario: Partially Update Booking
+    Given the booking API is available
+    When I send a POST request to the endpoint with valid booking details
+    And I send a PATCH request to the endpoint with the updated booking fields
+    Then I should receive a successful response
+    And the response body should contain the partially updated booking details

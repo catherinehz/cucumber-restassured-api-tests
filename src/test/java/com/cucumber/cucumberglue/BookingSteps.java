@@ -4,6 +4,7 @@ import com.cucumber.controllers.BookingController;
 import com.cucumber.dto_classes.BookingIdDto;
 import com.cucumber.dto_classes.BookingItemDetailsDto;
 import com.cucumber.dto_classes.BookingItemDto;
+import com.cucumber.helpers.AssertsHelper;
 import com.cucumber.helpers.BookingBuildersHelper;
 import com.cucumber.helpers.ScenarioContext;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -71,7 +72,7 @@ public class BookingSteps extends GeneralSteps {
         BookingItemDetailsDto createdBooking = scenarioContext().getFromStore(RESPONSE, Response.class)
                 .as(BookingItemDto.class).getBooking();
 
-        verifyDetailsFor(expectedBooking, createdBooking);
+        AssertsHelper.verifyDetailsFor(expectedBooking, createdBooking);
     }
 
     @And("I send a GET request to the endpoint with created booking ID")
@@ -91,7 +92,7 @@ public class BookingSteps extends GeneralSteps {
         BookingItemDetailsDto createdBooking = scenarioContext()
                 .getFromStore(RESPONSE, Response.class).as(BookingItemDetailsDto.class);
 
-        verifyDetailsFor(expectedBooking, createdBooking);
+        AssertsHelper.verifyDetailsFor(expectedBooking, createdBooking);
     }
 
     @And("I send a PUT request to the endpoint with updated booking details")
@@ -113,16 +114,28 @@ public class BookingSteps extends GeneralSteps {
         BookingItemDetailsDto createdBooking = scenarioContext()
                 .getFromStore(RESPONSE, Response.class).as(BookingItemDetailsDto.class);
 
-        verifyDetailsFor(expectedBooking, createdBooking);
+        AssertsHelper.verifyDetailsFor(expectedBooking, createdBooking);
     }
 
-    private void verifyDetailsFor(BookingItemDetailsDto expectedBooking, BookingItemDetailsDto createdBooking) {
+    @And("I send a PATCH request to the endpoint with the updated booking fields")
+    public void sendAPatchRequestToTheEndpointWithTheUpdatedBookingFields() {
+        BookingItemDto createdBooking = scenarioContext().getFromStore(RESPONSE, Response.class).as(BookingItemDto.class);
+        int bookingId = createdBooking.getBookingid();
+
+        BookingItemDetailsDto buildPartialBooking = BookingBuildersHelper.buildPartialBooking();
+        Response response = bookingController.partialBookingUpdate(buildPartialBooking, bookingId);
+        scenarioContext().putInStore(RESPONSE, response);
+        scenarioContext().putInStore("partialUpdatedBooking", buildPartialBooking);
+    }
+
+    @And("the response body should contain the partially updated booking details")
+    public void theResponseBodyShouldContainThePartiallyUpdatedBookingDetails() {
+        BookingItemDetailsDto expectedBooking = scenarioContext()
+                .getFromStore("partialUpdatedBooking", BookingItemDetailsDto.class);
+        BookingItemDetailsDto createdBooking = scenarioContext()
+                .getFromStore(RESPONSE, Response.class).as(BookingItemDetailsDto.class);
+
         Assert.assertEquals(expectedBooking.getFirstname(), createdBooking.getFirstname());
         Assert.assertEquals(expectedBooking.getLastname(), createdBooking.getLastname());
-        Assert.assertEquals(expectedBooking.getTotalprice(), createdBooking.getTotalprice());
-        Assert.assertEquals(expectedBooking.isDepositpaid(), createdBooking.isDepositpaid());
-        Assert.assertEquals(expectedBooking.getBookingdates().getCheckin(), createdBooking.getBookingdates().getCheckin());
-        Assert.assertEquals(expectedBooking.getBookingdates().getCheckout(), createdBooking.getBookingdates().getCheckout());
-        Assert.assertEquals(expectedBooking.getAdditionalneeds(), createdBooking.getAdditionalneeds());
     }
 }
