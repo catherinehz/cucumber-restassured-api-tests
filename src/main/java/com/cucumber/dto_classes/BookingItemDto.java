@@ -21,6 +21,4 @@ public class BookingItemDto {
     // Nested Booking class to represent the "booking" field in the response
     @JsonProperty("booking")
     private BookingItemDetailsDto booking;
-
-
 }
