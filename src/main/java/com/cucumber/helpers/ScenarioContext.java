@@ -10,19 +10,10 @@ public enum ScenarioContext {
     CONTEXT;
 
     public static final String RESPONSE = "RESPONSE";
-
     private Map<String, Object> expectedValueMap = new HashMap<>();
 
     public void reset() {
         expectedValueMap.clear();
-    }
-
-    public void setExpectedValue(String key, Object value) {
-        expectedValueMap.put(key, value);
-    }
-
-    public Object getExpectedValue(String key) {
-        return expectedValueMap.get(key);
     }
 
     private Map<String, Object> store = new ConcurrentHashMap<>();

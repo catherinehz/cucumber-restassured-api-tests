@@ -18,7 +18,6 @@ public class BookingItemDto {
     @JsonProperty("bookingid")
     private int bookingid;
 
-    // Nested Booking class to represent the "booking" field in the response
     @JsonProperty("booking")
     private BookingItemDetailsDto booking;
 }

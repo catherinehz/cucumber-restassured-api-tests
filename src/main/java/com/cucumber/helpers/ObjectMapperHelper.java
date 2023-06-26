@@ -2,9 +2,6 @@ package com.cucumber.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.File;
 import java.io.IOException;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -29,10 +26,5 @@ public class ObjectMapperHelper {
     public static String writeObjectToJsonString(Object object) throws IOException {
         ObjectMapper mapper = getInstance();
         return mapper.writeValueAsString(object);
-    }
-
-    public static <T> T readJsonFileToObject(String filePath, Class<T> valueType) throws IOException {
-        ObjectMapper mapper = getInstance();
-        return mapper.readValue(new File(filePath), valueType);
     }
 }
