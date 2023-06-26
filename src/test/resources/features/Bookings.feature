@@ -17,3 +17,10 @@ Feature: Booking API testing
     And I send a GET request to the endpoint with created booking ID
     Then I should receive a successful response
     And the response body should contain the created booking details for the specified ID
+
+  Scenario: Update Booking
+    Given the booking API is available
+    When I send a POST request to the endpoint with valid booking details
+    And I send a PUT request to the endpoint with updated booking details
+    Then I should receive a successful response
+    And the response body should contain the updated booking details
