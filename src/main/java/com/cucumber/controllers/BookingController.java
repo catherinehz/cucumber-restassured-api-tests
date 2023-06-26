@@ -26,4 +26,12 @@ public class BookingController extends GenericController {
         verifySuccessRequest(response);
         return response;
     }
+
+    public Response getBookingById(int bookingId) {
+        String bookingURL = bookingsURL + "/" + bookingId;
+        Response response = httpClient.doGet(bookingURL);
+        verifySuccessRequest(response);
+        return response;
+    }
+
 }

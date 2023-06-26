@@ -133,6 +133,13 @@
             <version>7.10.1</version>
             <scope>compile</scope>
         </dependency>
+
+        <!-- Javafaker -->
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+        </dependency>
     </dependencies>
 
     <build>

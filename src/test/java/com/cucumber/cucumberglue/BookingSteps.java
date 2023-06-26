@@ -1,13 +1,11 @@
 package com.cucumber.cucumberglue;
 
 import com.cucumber.controllers.BookingController;
+import com.cucumber.dto_classes.BookingIdDto;
 import com.cucumber.dto_classes.BookingItemDetailsDto;
 import com.cucumber.dto_classes.BookingItemDto;
-import com.cucumber.dto_classes.BookingIdDto;
 import com.cucumber.helpers.BookingBuildersHelper;
-import com.cucumber.helpers.ObjectMapperHelper;
 import com.cucumber.helpers.ScenarioContext;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cucumber.java.en.And;
@@ -26,11 +24,9 @@ public class BookingSteps extends GeneralSteps {
     private ScenarioContext scenarioContext;
     private Response response;
     private BookingIdDto bookingIdDto;
-    private BookingItemDetailsDto bookingItemDetailsDto;
-
-    private ObjectMapperHelper objectMapperHelper = new ObjectMapperHelper();
+    private BookingItemDetailsDto bookingItemDetailsDto = new BookingItemDetailsDto();
     private BookingController bookingController = new BookingController();
-    List<BookingIdDto> bookingIdDtoList;
+    private List<BookingIdDto> bookingIdDtoList;
 
     public BookingSteps() {
     }
@@ -41,8 +37,6 @@ public class BookingSteps extends GeneralSteps {
 
     @Given("the booking API is available")
     public void theBookingApiIsAvailable() {
-        bookingController = new BookingController();
-
         Response response = bookingController.getBookingIds();
         Assert.assertEquals(200, response.getStatusCode());
         scenarioContext().putInStore(RESPONSE, response);
@@ -53,26 +47,16 @@ public class BookingSteps extends GeneralSteps {
         Response response = bookingController.getBookingIds();
         String responseBody = response.getBody().asString();
         ObjectMapper objectMapper = new ObjectMapper();
-        List<BookingIdDto> bookingsResponse = objectMapper.readValue(
-                responseBody, new TypeReference<List<BookingIdDto>>() {});
-        bookingIdDtoList = bookingsResponse;
-    }
-
-    @Then("I should receive a list of bookings")
-    public void shouldReceiveAListOfBookings() {
-        int statusCode = scenarioContext().getFromStore(RESPONSE, Response.class).getStatusCode();
-        Assert.assertEquals(200, statusCode);
-        Assert.assertNotNull(bookingIdDtoList);
+        bookingIdDtoList = objectMapper.readValue(responseBody, new TypeReference<List<BookingIdDto>>() {
+        });
     }
 
     @When("I send a POST request to the endpoint with valid booking details")
-    public void iSendAPOSTRequestToTheEndpointWithValidBookingDetails() {
+    public void sendAPostRequestToTheEndpointWithValidBookingDetails() {
         bookingItemDetailsDto = BookingBuildersHelper.buildValidBooking();
         Response response = bookingController.createBooking(bookingItemDetailsDto);
-        Assert.assertEquals(200, response.getStatusCode());
         scenarioContext().putInStore(RESPONSE, response);
         scenarioContext().putInStore("createdBooking", bookingItemDetailsDto);
-
     }
 
     @Then("I should receive a successful response")
@@ -81,12 +65,36 @@ public class BookingSteps extends GeneralSteps {
         Assert.assertEquals(200, statusCode);
     }
 
-    @And("the response body should contain the created booking details")
+    @And("^the response body should contain the created booking details$")
     public void theResponseBodyShouldContainTheCreatedBookingDetails() {
         BookingItemDetailsDto expectedBooking = scenarioContext().getFromStore("createdBooking", BookingItemDetailsDto.class);
         BookingItemDetailsDto createdBooking = scenarioContext().getFromStore(RESPONSE, Response.class)
                 .as(BookingItemDto.class).getBooking();
 
+        verifyDetailsFor(expectedBooking, createdBooking);
+    }
+
+    @And("I send a GET request to the endpoint with created booking ID")
+    public void sendAGetRequestToTheEndpointWithCreatedBookingID() {
+        BookingItemDto createdBooking = scenarioContext().getFromStore(RESPONSE, Response.class).as(BookingItemDto.class);
+        int bookingId = createdBooking.getBookingid();
+
+        Response response = bookingController.getBookingById(bookingId);
+        Assert.assertEquals(200, response.getStatusCode());
+        scenarioContext().putInStore(RESPONSE, response);
+    }
+
+    @And("^the response body should contain the created booking details for the specified ID$")
+    public void theResponseBodyShouldContainTheCreatedBookingDetailsForSpecifiedId() {
+        BookingItemDetailsDto expectedBooking = scenarioContext()
+                .getFromStore("createdBooking", BookingItemDetailsDto.class);
+        BookingItemDetailsDto createdBooking = scenarioContext()
+                .getFromStore(RESPONSE, Response.class).as(BookingItemDetailsDto.class);
+
+        verifyDetailsFor(expectedBooking, createdBooking);
+    }
+
+    private void verifyDetailsFor(BookingItemDetailsDto expectedBooking, BookingItemDetailsDto createdBooking) {
         Assert.assertEquals(expectedBooking.getFirstname(), createdBooking.getFirstname());
         Assert.assertEquals(expectedBooking.getLastname(), createdBooking.getLastname());
         Assert.assertEquals(expectedBooking.getTotalprice(), createdBooking.getTotalprice());
@@ -95,5 +103,4 @@ public class BookingSteps extends GeneralSteps {
         Assert.assertEquals(expectedBooking.getBookingdates().getCheckout(), createdBooking.getBookingdates().getCheckout());
         Assert.assertEquals(expectedBooking.getAdditionalneeds(), createdBooking.getAdditionalneeds());
     }
-
 }
