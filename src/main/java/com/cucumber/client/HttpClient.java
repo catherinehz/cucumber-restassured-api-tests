@@ -9,9 +9,6 @@ import io.restassured.specification.RequestSpecification;
 
 public class HttpClient {
 
-    public static final int CODE_200 = 200;
-    public static final int CODE_201= 201;
-
     public HttpClient() {
         RestAssured.defaultParser = Parser.JSON;
     }
@@ -29,40 +26,12 @@ public class HttpClient {
         return this.doRequest(this.prepareRequest(reqSpec, true), Method.GET, url);
     }
 
-    public Response doPost(String url) {
-        return this.doRequest(this.prepareRequest(true), Method.POST, url);
-    }
-
     public Response doPost(String url, Object body) {
         return this.doRequest(this.prepareRequest(body, true), Method.POST, url);
     }
 
-    public Response doPost(String url, Object body, RequestSpecification reqSpec) {
-        return this.doRequest(this.prepareRequest(body, reqSpec, true), Method.POST, url);
-    }
-
-    public Response doPost(String url, Object body, RequestSpecification reqSpec, boolean isDefaultContentType) {
-        return this.doRequest(this.prepareRequest(body, reqSpec, isDefaultContentType), Method.POST, url);
-    }
-
-    public Response doPost(String url, RequestSpecification reqSpec, boolean isDefaultContentType) {
-        return this.doRequest(this.prepareRequest(reqSpec, isDefaultContentType), Method.POST, url);
-    }
-
-    public Response doPut(String url) {
-        return this.doRequest(this.prepareRequest(true), Method.PUT, url);
-    }
-
-    public Response doPut(String url, Object body) {
-        return this.doRequest(this.prepareRequest(body, true), Method.PUT, url);
-    }
-
     public Response doPut(String url, Object body, RequestSpecification reqSpec) {
         return this.doRequest(this.prepareRequest(body, reqSpec, true), Method.PUT, url);
-    }
-
-    public Response doPatch(String url, RequestSpecification reqSpec) {
-        return this.doRequest(this.prepareRequest(reqSpec, true), Method.PATCH, url);
     }
 
     public Response doPatch(String url, Object body, RequestSpecification reqSpec) {
@@ -71,14 +40,6 @@ public class HttpClient {
 
     public Response doDelete(String url, RequestSpecification reqSpec) {
         return this.doRequest(this.prepareRequest(reqSpec, true), Method.DELETE, url);
-    }
-
-    public Response doDelete(String url) {
-        return this.doRequest(this.prepareRequest(true), Method.DELETE, url);
-    }
-
-    public Response doDelete(String url, Object body) {
-        return this.doRequest(this.prepareRequest(body, true), Method.DELETE, url);
     }
 
     private RequestSpecification prepareRequest(boolean isDefaultContentType) {

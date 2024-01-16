@@ -16,13 +16,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.response.Response;
+import org.apache.http.HttpStatus;
 import org.junit.Assert;
 
 import java.io.IOException;
 import java.util.List;
 
-import static com.cucumber.client.HttpClient.CODE_200;
-import static com.cucumber.client.HttpClient.CODE_201;
 import static com.cucumber.helpers.ScenarioContext.RESPONSE;
 
 public class BookingSteps extends GeneralSteps {
@@ -43,7 +42,7 @@ public class BookingSteps extends GeneralSteps {
     @Given("the booking API is available")
     public void theBookingApiIsAvailable() {
         Response response = bookingController.getBookingIds();
-        Assert.assertEquals(CODE_200, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         scenarioContext().putInStore(RESPONSE, response);
     }
 
@@ -85,7 +84,7 @@ public class BookingSteps extends GeneralSteps {
         int bookingId = createdBooking.getBookingid();
 
         Response response = bookingController.getBookingById(bookingId);
-        Assert.assertEquals(CODE_200, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.SC_OK, response.getStatusCode());
         scenarioContext().putInStore(RESPONSE, response);
     }
 
@@ -155,7 +154,7 @@ public class BookingSteps extends GeneralSteps {
     @And("the response body should confirm the deletion of the booking")
     public void responseBodyShouldConfirmTheDeletionOfTheBooking() {
         Response response = scenarioContext().getFromStore(RESPONSE, Response.class);
-        Assert.assertEquals(CODE_201, response.getStatusCode());
+        Assert.assertEquals(HttpStatus.SC_CREATED, response.getStatusCode());
     }
 
     @And("^I send a GET request to the endpoint with the specified filters (\\d{4}-\\d{2}-\\d{2}) and (\\d{4}-\\d{2}-\\d{2})$")
